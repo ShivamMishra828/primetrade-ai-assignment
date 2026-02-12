@@ -59,7 +59,7 @@ class TaskService {
             const isAdmin: boolean = userRole === 'admin';
             const isOwner: boolean = task.createdBy === userId;
 
-            if (task.createdBy !== userId) {
+            if (!isAdmin && !isOwner) {
                 throw new AppError(
                     'You do not have permission to update task status',
                     StatusCodes.FORBIDDEN,
@@ -76,6 +76,59 @@ class TaskService {
                     'Failed to update task status',
                     StatusCodes.INTERNAL_SERVER_ERROR,
                     'TASK_UPDATION_FAILED',
+                );
+            }
+        }
+    }
+
+    async findById(userId: string, taskId: string, userRole: Role): Promise<Task | null> {
+        try {
+            const task = await this.taskRepository.findById(taskId);
+
+            if (!task) {
+                throw new AppError('Task not found', StatusCodes.NOT_FOUND, 'TASK_NOT_FOUND');
+            }
+
+            const isAdmin: boolean = userRole === 'admin';
+            const isOwner: boolean = task.createdBy === userId;
+
+            if (!isAdmin && !isOwner) {
+                throw new AppError(
+                    'You do not have permission to view this task',
+                    StatusCodes.FORBIDDEN,
+                    'FORBIDDEN',
+                );
+            }
+
+            return task;
+        } catch (err: unknown) {
+            if (err instanceof AppError) {
+                throw err;
+            } else {
+                throw new AppError(
+                    'Failed to fetch task by id',
+                    StatusCodes.INTERNAL_SERVER_ERROR,
+                    'TASK_SEARCH_FAILED',
+                );
+            }
+        }
+    }
+
+    async findAllTasks(userId: string, userRole: Role): Promise<Task[]> {
+        try {
+            if (userRole === 'admin') {
+                return await this.taskRepository.findAllTaskAdmin();
+            } else {
+                return await this.taskRepository.findAllTaskUser(userId);
+            }
+        } catch (err: unknown) {
+            if (err instanceof AppError) {
+                throw err;
+            } else {
+                throw new AppError(
+                    'Failed to fetch task by id',
+                    StatusCodes.INTERNAL_SERVER_ERROR,
+                    'TASK_SEARCH_FAILED',
                 );
             }
         }

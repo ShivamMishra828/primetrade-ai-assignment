@@ -3,6 +3,7 @@ import TaskRepository from '../repositories/task-repository';
 import TaskService from '../services/task-service';
 import { StatusCodes } from 'http-status-codes';
 import { SuccessResponse } from '../utils/responses';
+import { Task } from '@prisma/client';
 
 const taskRepository = new TaskRepository();
 const taskService = new TaskService(taskRepository);
@@ -35,6 +36,40 @@ export async function updateTaskStatus(
         res.status(StatusCodes.CREATED).json(
             new SuccessResponse('Task status updated successfully', task),
         );
+    } catch (err: unknown) {
+        next(err);
+    }
+}
+
+export async function fetchTaskById(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+): Promise<void> {
+    try {
+        const task = await taskService.findById(
+            req.user!.id,
+            req.params.id as string,
+            req.user!.role,
+        );
+
+        res.status(StatusCodes.OK).json(
+            new SuccessResponse('Successfully fetched task by id', task),
+        );
+    } catch (err: unknown) {
+        next(err);
+    }
+}
+
+export async function fetchAllTasks(
+    req: Request,
+    res: Response,
+    next: NextFunction,
+): Promise<void> {
+    try {
+        const tasks = await taskService.findAllTasks(req.user!.id, req.user!.role);
+
+        res.status(StatusCodes.OK).json(new SuccessResponse('Tasks fetched successfully', tasks));
     } catch (err: unknown) {
         next(err);
     }

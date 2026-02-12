@@ -6,7 +6,12 @@ import {
     taskIdParamSchema,
     taskStatusUpdateSchema,
 } from '../../schemas/task-schema';
-import { createTask, updateTaskStatus } from '../../controllers/task-controller';
+import {
+    createTask,
+    fetchAllTasks,
+    fetchTaskById,
+    updateTaskStatus,
+} from '../../controllers/task-controller';
 
 const router: Router = express.Router();
 
@@ -20,5 +25,9 @@ router.patch(
     validate(taskStatusUpdateSchema),
     updateTaskStatus,
 );
+
+router.get('/:id', validate(taskIdParamSchema, 'params'), fetchTaskById);
+
+router.get('/', fetchAllTasks);
 
 export default router;

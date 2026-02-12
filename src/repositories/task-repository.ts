@@ -15,6 +15,14 @@ class TaskRepository {
     updateStatus(id: string, status: TaskStatus): Promise<Task> {
         return prisma.task.update({ where: { id }, data: { status } });
     }
+
+    findAllTaskAdmin(): Promise<Task[]> {
+        return prisma.task.findMany();
+    }
+
+    findAllTaskUser(userId: string): Promise<Task[]> {
+        return prisma.task.findMany({ where: { createdBy: userId } });
+    }
 }
 
 export default TaskRepository;
