@@ -7,6 +7,7 @@ import { StatusCodes } from 'http-status-codes';
 import cookieParser from 'cookie-parser';
 import requestLogger from './middlewares/request-logger-middleware';
 import globalErrorHandler from './middlewares/global-error-handler';
+import prisma from './config/prisma-config';
 
 const app: Express = express();
 
@@ -34,15 +35,25 @@ app.use(
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: true }));
 
-app.get('/health', (_req: Request, res: Response): void => {
+app.get('/health', async (_req: Request, res: Response): Promise<void> => {
     res.set('Cache-Control', 'no-store');
 
-    res.status(StatusCodes.OK).json({
-        success: true,
-        message: 'Server is up and running smoothly!',
-        uptime: process.uptime(),
-        timestamp: new Date().toISOString(),
-    });
+    try {
+        await prisma.$queryRaw`SELECT 1`;
+
+        res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Server and database are healthy',
+            uptime: process.uptime(),
+            timestamp: new Date().toISOString(),
+        });
+    } catch (error) {
+        res.status(StatusCodes.SERVICE_UNAVAILABLE).json({
+            success: false,
+            message: 'Database connection failed',
+            timestamp: new Date().toISOString(),
+        });
+    }
 });
 
 app.use(globalRateLimiter);
