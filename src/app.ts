@@ -6,6 +6,7 @@ import { globalRateLimiter } from './utils/rate-limiter';
 import { StatusCodes } from 'http-status-codes';
 import cookieParser from 'cookie-parser';
 import requestLogger from './middlewares/request-logger-middleware';
+import globalErrorHandler from './middlewares/global-error-handler';
 
 const app: Express = express();
 
@@ -45,5 +46,7 @@ app.get('/health', (_req: Request, res: Response): void => {
 });
 
 app.use(globalRateLimiter);
+
+app.use(globalErrorHandler);
 
 export default app;
