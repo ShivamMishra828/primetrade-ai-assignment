@@ -74,3 +74,12 @@ export async function fetchAllTasks(
         next(err);
     }
 }
+
+export async function deleteTask(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+        await taskService.deleteTask(req.params.id as string, req.user!.id, req.user!.role);
+        res.status(StatusCodes.OK).json(new SuccessResponse('Task deleted successfully', null));
+    } catch (err: unknown) {
+        next(err);
+    }
+}

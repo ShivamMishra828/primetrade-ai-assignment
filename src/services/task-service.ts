@@ -126,9 +126,44 @@ class TaskService {
                 throw err;
             } else {
                 throw new AppError(
-                    'Failed to fetch task by id',
+                    'Failed to fetch all tasks',
                     StatusCodes.INTERNAL_SERVER_ERROR,
                     'TASK_SEARCH_FAILED',
+                );
+            }
+        }
+    }
+
+    async deleteTask(taskId: string, userId: string, userRole: Role): Promise<void> {
+        try {
+            const task = await this.taskRepository.findById(taskId);
+
+            if (!task) {
+                throw new AppError('Task not found', StatusCodes.NOT_FOUND, 'TASK_NOT_FOUND');
+            }
+
+            const isAdmin: boolean = userRole === 'admin';
+            const isOwner: boolean = task.createdBy === userId;
+
+            if (!isAdmin && !isOwner) {
+                throw new AppError(
+                    'You do not have permission to delete this task',
+                    StatusCodes.FORBIDDEN,
+                    'FORBIDDEN',
+                );
+            }
+
+            await this.taskRepository.deleteTask(taskId);
+
+            return;
+        } catch (err: unknown) {
+            if (err instanceof AppError) {
+                throw err;
+            } else {
+                throw new AppError(
+                    'Failed to delete task',
+                    StatusCodes.INTERNAL_SERVER_ERROR,
+                    'TASK_DELETION_FAILED',
                 );
             }
         }

@@ -10,5 +10,5 @@ export const taskIdParamSchema = z.object({
 });
 
 export const taskStatusUpdateSchema = z.object({
-    status: z.enum(['pending', 'completed', 'cancelled']),
+    status: z.enum(['pending', 'completed']),
 });

@@ -8,6 +8,7 @@ import {
 } from '../../schemas/task-schema';
 import {
     createTask,
+    deleteTask,
     fetchAllTasks,
     fetchTaskById,
     updateTaskStatus,
@@ -29,5 +30,7 @@ router.patch(
 router.get('/:id', validate(taskIdParamSchema, 'params'), fetchTaskById);
 
 router.get('/', fetchAllTasks);
+
+router.delete('/:id', validate(taskIdParamSchema, 'params'), deleteTask);
 
 export default router;
