@@ -3,7 +3,14 @@
     "version": "1.0.0",
     "description": "Scalable REST APIs with Authentication & Role-Based Access",
     "main": "dist/index.js",
-    "scripts": {},
+    "scripts": {
+        "start": "tsc && node dist/index.js",
+        "build": "tsc",
+        "start:dev": "nodemon",
+        "format": "prettier --write .",
+        "lint": "eslint . --ext .ts",
+        "lint:fix": "eslint . --ext .ts --fix"
+    },
     "author": "Shivam Kumar",
     "license": "ISC",
     "packageManager": "pnpm@10.28.0",
