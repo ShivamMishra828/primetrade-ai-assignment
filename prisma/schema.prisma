@@ -11,6 +11,12 @@ enum Role {
   user
 }
 
+enum TaskStatus {
+  pending
+  completed
+  cancelled
+}
+
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -18,7 +24,21 @@ model User {
   role      Role
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  tasks     Task[]
 
-  @@index([email])
   @@map("users")
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  name        String
+  description String
+  status      TaskStatus @default(pending)
+  createdBy   String     @map("created_by")
+  creator     User       @relation(fields: [createdBy], references: [id])
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  @@index([createdBy])
+  @@map("tasks")
 }
