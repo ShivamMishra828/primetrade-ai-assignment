@@ -8,6 +8,7 @@ import cookieParser from 'cookie-parser';
 import requestLogger from './middlewares/request-logger-middleware';
 import globalErrorHandler from './middlewares/global-error-handler';
 import prisma from './config/prisma-config';
+import apiRoutes from './routes';
 
 const app: Express = express();
 
@@ -57,6 +58,8 @@ app.get('/health', async (_req: Request, res: Response): Promise<void> => {
 });
 
 app.use(globalRateLimiter);
+
+app.use('/api', apiRoutes);
 
 app.use(globalErrorHandler);
 
