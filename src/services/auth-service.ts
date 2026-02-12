@@ -2,12 +2,22 @@ import AuthRepository from '../repositories/auth-repository';
 import AppError from '../utils/app-error';
 import { StatusCodes } from 'http-status-codes';
 import { User } from '@prisma/client';
-import { hashPassword } from '../utils/helper';
+import { comparePassword, generateToken, hashPassword } from '../utils/helper';
 
 interface UserSignUpInput {
     email: string;
     password: string;
     role: 'admin' | 'user';
+}
+
+interface UserSignInInput {
+    email: string;
+    password: string;
+}
+
+interface UserSignInOutput {
+    user: Omit<User, 'password'>;
+    token: string;
 }
 
 class AuthService {
@@ -48,6 +58,49 @@ class AuthService {
             } else {
                 throw new AppError(
                     'An unexpected server error occurred during signup',
+                    StatusCodes.INTERNAL_SERVER_ERROR,
+                    'INTERNAL_SERVER_ERROR',
+                );
+            }
+        }
+    }
+
+    async signin(userData: UserSignInInput): Promise<UserSignInOutput> {
+        try {
+            const user = await this.authRepository.findByEmail(userData.email);
+
+            if (!user) {
+                throw new AppError(
+                    'User with this email does not exist',
+                    StatusCodes.NOT_FOUND,
+                    'USER_NOT_FOUND',
+                );
+            }
+
+            const isPasswordValid: boolean = await comparePassword(
+                userData.password,
+                user.password,
+            );
+
+            if (!isPasswordValid) {
+                throw new AppError(
+                    'Invalid credentials. Please check your email and password',
+                    StatusCodes.UNAUTHORIZED,
+                    'INVALID_CREDENTIALS',
+                );
+            }
+
+            const token: string = generateToken(user.id, user.role);
+
+            const { password: _, ...userWithoutPassword } = user;
+
+            return { user: userWithoutPassword, token };
+        } catch (err: unknown) {
+            if (err instanceof AppError) {
+                throw err;
+            } else {
+                throw new AppError(
+                    'An unexpected server error occurred during signin',
                     StatusCodes.INTERNAL_SERVER_ERROR,
                     'INTERNAL_SERVER_ERROR',
                 );
