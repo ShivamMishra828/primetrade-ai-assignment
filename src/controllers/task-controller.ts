@@ -33,7 +33,7 @@ export async function updateTaskStatus(
             req.user!.role,
         );
 
-        res.status(StatusCodes.CREATED).json(
+        res.status(StatusCodes.OK).json(
             new SuccessResponse('Task status updated successfully', task),
         );
     } catch (err: unknown) {
