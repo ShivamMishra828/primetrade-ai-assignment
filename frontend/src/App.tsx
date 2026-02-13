@@ -1,8 +1,13 @@
+import { Route, Routes } from 'react-router-dom';
+import Signup from './pages/Signup.tsx';
+
 function App() {
     return (
-        <>
-            <div>Hello</div>
-        </>
+        <div className="App">
+            <Routes>
+                <Route path="/signup" element={<Signup />} />
+            </Routes>
+        </div>
     );
 }
 
