@@ -29,6 +29,23 @@ This project demonstrates secure authentication, role-based authorization, struc
 - Update task status
 - Soft delete task (status = cancelled)
 
+### 🌐 Frontend UI (React + TypeScript + Vite)
+
+Located inside `/frontend`.
+
+### Implemented Features:
+
+- Signup page
+- Login page
+- Protected dashboard route
+- JWT handling with cookies
+- Task CRUD UI
+- Toast notifications (react-hot-toast)
+- Route protection using React Router
+- Authentication refresh handler
+
+Frontend communicates with backend via `/api/v1` routes.
+
 ### 🛡 Security & Best Practices
 - Zod request validation
 - Global error handling
@@ -56,6 +73,7 @@ This structure ensures scalability and easy extension of new modules.
 
 # 🧰 Tech Stack
 
+### Backend
 - Node.js
 - Express.js
 - TypeScript
@@ -66,12 +84,18 @@ This structure ensures scalability and easy extension of new modules.
 - Zod
 - Pino
 
+### Frontend
+- React
+- TypeScript
+- Vite
+- React Router
+- React Hot Toast
+
 ---
 
 # 🌐 API Base URL
 
 http://localhost:3000/api/v1
-
 
 ---
 
@@ -131,6 +155,8 @@ RATE_LIMIT_AUTH_MAX=5
 
 # ▶️ Running Locally
 
+## Backend
+
 ### 1. Install dependencies
 
 ```bash
@@ -163,6 +189,20 @@ pnpm run start:dev
 ```
 
 Server will run at: http://localhost:3000
+
+## Frontend
+
+Navigate to frontend directory:
+
+```bash
+cd frontend
+pnpm install
+pnpm run dev
+```
+
+Frontend runs at: http://localhost:5173
+
+Make sure backend is running before using frontend.
 
 ---
 
