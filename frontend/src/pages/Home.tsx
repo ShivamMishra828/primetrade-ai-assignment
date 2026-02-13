@@ -18,6 +18,7 @@ function Home() {
 
             if (response.ok) {
                 handleSuccess(result.success.message);
+                localStorage.removeItem('token');
 
                 setTimeout(() => {
                     navigate('/login');
